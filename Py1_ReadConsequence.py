@@ -3,6 +3,7 @@
 # 2. Evaluate LeakFrequency
 # 3. Export PHAST input 
 #    Time varying discharge profile shall have been exported to separate files
+#    Safety sytems i.e. ESD and BD should be defined.
 # 4. Export PHaST output
 # 5. Define Targets
 
@@ -397,12 +398,15 @@ IS_sub = {}
 numESDVs = {}
 Modules = {}
 Deck = {}
-r = 3
+StartRow = 3
+r = StartRow
+#Number of sections to be read:
+NumSections = 5
 # while r < 79:
 #     nsub = shIS.cell(r,4).value
 #     IS_sub[shIS.cell(r,3).value] = [r,nsub]
 #     r += nsub
-while r < 82:
+while r < StartRow + NumSections:
     pv = shIS.cell(r,5).value
     IS_sub[pv] = shIS.cell(r,11).value #Read for each leak at respective height
     Modules[pv] = shIS.cell(r,7).value
@@ -432,8 +436,6 @@ while shFreq.cell(r,2).value == "Full pressure leak":
         Frequency[pv][3] = shFreq.cell(r,13).value # LA
     r += 3
 numIS = (r-5)/3
-
-
 
 #3. Read PHAST Input
 #Read 'Presure vessel' from Input
