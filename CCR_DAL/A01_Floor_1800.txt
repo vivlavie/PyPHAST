@@ -1,0 +1,4 @@
+CCR_DAL\A01_Floor_1800 No dimensioning scenario  Mod  (Freq. ) - Jet length  CumFreq
+S3\ME-EOBO\0.1F                    A01   5.74e-06      3.1   5.74e-06
+S3\SM-EOBO\0.1F                    A01   7.63e-06      2.4   1.34e-05
+S9\LA-EOBN\0.1F                    A01   7.36e-07      0.0   1.41e-05

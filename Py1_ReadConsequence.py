@@ -39,7 +39,7 @@ def slugify(value):
 NumDirections = 6 # 6 cones to cover the all release direction for a sphere
 
 
-TVDPLot = False
+TVDPLot = True
 
 iExlFilename='H2495_i'
 #Topside
@@ -423,7 +423,8 @@ r=5
 while shFreq.cell(r,2).value == "Full pressure leak":     
     pv  = shFreq.cell(r,1).value 
     Frequency[pv] = [0.,0.,0.,0.]
-    if pv[-1] == "G":
+    # if pv[-1] == "G":
+    if (pv == "S3") or (pv == "S8"):
         Frequency[pv][0] = shFreq.cell(r,4).value #Gas SM
         Frequency[pv][1] = shFreq.cell(r,5).value # ME
         Frequency[pv][2] = shFreq.cell(r,6).value # MA
@@ -584,12 +585,8 @@ for r in range(2,shDc.max_row+1):
                 print(pv,hole,'BDV value wrong')
                 break
 
-            if weather == '2.9F':
-                leak_freq *= 0.486
-            elif weather == '7.7D':
-                leak_freq *= 0.471
-            elif weather == '14.5D':
-                leak_freq *= 0.044
+            if weather == '0.1F':
+                leak_freq *= 1            
             else:
                 print('Wrong wetaher', key_hole_weather)
                 break
@@ -609,9 +606,9 @@ for r in range(2,shDc.max_row+1):
 #Up to now, read IS, '_i', '_c[Discharge]'
 
 IgnProb = {}
-IgnProb['s3']=[0.08, 0.09, 0.11, 0.12]
-IgnProb['s8']=[0.08, 0.09, 0.11, 0.12]
-IgnProb['s9']=[0.005, 0.01, 0.04, 0.06]
+IgnProb['S3']=[0.08, 0.09, 0.11, 0.12]
+IgnProb['S8']=[0.08, 0.09, 0.11, 0.12]
+IgnProb['S9']=[0.005, 0.01, 0.04, 0.06]
 
 IgnProb['General']=[0.000502,0.001677,0.017112,0.017916]
 
@@ -846,7 +843,7 @@ for sfx in SFXFiles:
                     plt.title(pngfilename)            
                     plt.show()
                     fn = slugify(pngfilename)
-                    fig.savefig(".\\tvd_rev.B\\{}.png".format(fn))
+                    fig.savefig(".\\tvd\\{}.png".format(fn))
                     plt.close()
                     
 
@@ -1110,8 +1107,7 @@ with open(element_dump_filename,'wb') as element_dump:
 
 F = Fe = Fl = 0.
 for e in lEvent:
-    if "-L" in e.Key:
-        F += e.Frequency
+    F += e.Frequency
     if e.EarlyPoolFire is not None:    
         Fe += e.EarlyPoolFire.Frequency
     if e.LatePoolFire is not None:    

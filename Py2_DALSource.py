@@ -58,18 +58,18 @@ def print_a_event(lEvent,key='',hole='',weather=''):
         i += 1
         
 WantPlot = True
-cube_result2file = True
+source_result2file = True
 
-element_dump_filename = 'Bv06_dump'
-Area = "ProcessArea"
-
-if Loaded == False:
-    with open(element_dump_filename,'rb') as element_dump:
-        lEvent = dill.load(element_dump)
-        Loaded = True
+element_dump_filename = 'H2495_dump'
+Area = "CCR"
 
 
-iIS=load_workbook(filename='IS_v12_shk.xlsx')
+with open(element_dump_filename,'rb') as element_dump:
+    lEvent = dill.load(element_dump)
+
+
+
+iIS=load_workbook(filename='I1_ProcessInfo.xlsx')
 shIS = iIS['Isolatable summary']
 IS_sub = {}
 numESDVs = {}
@@ -98,7 +98,7 @@ while r < 82:
 numDirections = 6
 Ts = [0, 300, 600, 1800, 3600]
 # for ti in range(0,5): #tt 1: 5 min, 2:10 min, 3: 30 min, 3: 60min
-for ti in range(1,5):
+for ti in range(0,1):
     print(Ts[ti])
     F = 0.
     JFModule = {}
@@ -120,12 +120,12 @@ for ti in range(1,5):
     print("{:20s} Toal jet fire frequency: {:10.2e}".format(Area, F))
     print("{:20s}{:30s}{:10s}{:20s}".format("Module","Scenario","Jet length ","Rel rate[kg/s]"))
 
-    # for m in JFLModule.keys():
-    for m in ['P05_A']:
+    for m in JFLModule.keys():
+    # for m in ['P05_A']:
         IDAsorted = sorted(JFLModule[m], key = lambda fl: fl[0]) #with the longest duration at the bottom
         
-        fn = "DimScnsModule\\{}_{:4d}".format(m,Ts[ti])
-        if cube_result2file == True:
+        fn = "CCR_DAL\\{}_{:4d}".format(m,Ts[ti])
+        if source_result2file == True:
             f_cube_result = open(fn+".txt","w")
         
         cf = 0
@@ -173,7 +173,7 @@ for ti in range(1,5):
         # print_cum_cube(mod,IDAsorted)
         
         
-        if (cube_result2file == True):
+        if (source_result2file == True):
             if InterpolationSuccess:                
                 print_cum_cube_file(fn,IDAsorted,f_cube_result) 
             else:                
@@ -220,7 +220,7 @@ for ti in range(1,5):
             plt.close()
 
 
-        if cube_result2file == True:
+        if source_result2file == True:
             f_cube_result.close()
 
 
