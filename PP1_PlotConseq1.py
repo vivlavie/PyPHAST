@@ -34,8 +34,8 @@ def slugify(value):
 # folder = 'Offloading'
 # XDir = -1 #From Stern to Bow
 
-element_dump_filename = 'Bv06_dump'
-folder = 'ProcessArea'
+element_dump_filename = 'H2495_dump'
+folder = 'CCR'
 XDir = 1 #From Bow to Stern
 
 # element_dump_filename = 'Bv06_utility_dump'
@@ -59,14 +59,8 @@ for e in lEvent:
         Y = e.Y
         
         fig,ax = plt.subplots()
-        if e.Deck == 'A':
-            img = plt.imread("RubyFPSODeckA.jpg")
-        elif (e.Deck == 'B') or (e.Deck == 'C'):
-            img = plt.imread("RubyFPSODeckB.jpg")
-        elif e.Deck == 'Hull':
-            # print('Hull deck?')
-            img = plt.imread("RubyFPSOHullDeck.jpg")
-        ax.imshow(img, extent=[-11, 252, -32.43, 50.19])
+        img = plt.imread("CCR.png")
+        ax.imshow(img, extent=[0, 38.9, -19.2, 0])
 
         #Plot Dispersion - LFL Fraction
         # if e.Dispersion != None:
@@ -74,7 +68,7 @@ for e in lEvent:
         #     DfMax = e.Dispersion.DfMax
         #     Wf = e.Dispersion.Wf
         #     if Wf == ' ':
-        #         Wf = e.Dispersion.FFWidth
+        #         Wf = e.Dispersion.FFWidth    
         #     AxisLongf = (DfMax - DfMin)
         #     AxisShortf = Wf
         #     DXf = (DfMax + DfMin)*0.5
@@ -151,42 +145,10 @@ for e in lEvent:
         ax.legend()
         plt.title(Key)
         # fn = 'C\\ProcessArea\\C_'+slugify(Key)+'.png'
-        fn = 'C\\'+folder+'\\C_'+slugify(Key)+'.png'
+        fn = folder+'_C\\c_'+slugify(Key)+'.png'
 
         fig.savefig(fn)
         # plt.show()
         plt.close()
 
 
-
-from docx import Document
-from docx.shared import Cm, RGBColor, Pt
-from docx.text.run import Font, Run
-# from docx.dml.color import ColorFormat
-
-document = Document()
-
-fontn = document.styles['Normal'].font
-fontn.size = Pt(9)
-fontn.name = 'Frutiger LT 45 Light'
-fontn.color.rgb = RGBColor(31, 73, 125)
-
-document.add_heading('PHAST Analysis - ' + folder, level=0)
-
-ISs = []
-for e in lEvent:
-    pvis,hole,weather = e.Key.split("\\")
-    if not (pvis in ISs):
-        ISs.append(pvis)
-nbr=1
-for IS in ISs:
-    document.add_heading(IS, level=1)
-    for e in lEvent:
-        pvis,hole,weather = e.Key.split("\\")
-        if IS == pvis:                        
-            fn = 'C\\'+folder+'\\C_'+slugify(e.Key)+'.png'
-            document.add_picture(fn, width=Cm(15))            
-            p = document.add_paragraph('Figure '+str(nbr) + " - " + pvis + " Hole: " + hole + " Weather: " + weather)
-            nbr = nbr +1
-    document.add_page_break()
-document.save('C_'+folder+'.docx')
