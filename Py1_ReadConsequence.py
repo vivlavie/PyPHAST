@@ -41,20 +41,21 @@ NumDirections = 6 # 6 cones to cover the all release direction for a sphere
 
 TVDPLot = False
 
-iExlFilename='Bv06_i'
+iExlFilename='H2495_i'
 #Topside
-Area = 'ProcessArea'
-cExlFilename='Bv06_u_c'
-SFXFiles = ['045-04-G','062-01-02-L']
-element_dump_filename = 'Bv06_utility_dump'
+Area = 'CCR'
+cExlFilename='H2495_c'
+SFXFiles = ['tvd_s3','tvd_s8','tvd_s9']
+element_dump_filename = 'H2495_dump'
 
 iExl=load_workbook(filename=iExlFilename+'.xlsx')
-cExl=load_workbook(filename=cExlFilename+'.xlsx')
-fExl=load_workbook(filename='Leak_Freq_Hole_Size.xlsx')
-shFreq = fExl['RESULTS - Hole size']
-
 shPV = iExl['Pressure vessel']
 shtTLV = iExl['Time varying leak']
+
+fExl=load_workbook(filename='H2495_LF.xlsx')
+shFreq = fExl['RESULTS - Hole size']
+
+cExl=load_workbook(filename=cExlFilename+'.xlsx')
 shDc = cExl['Discharge']
 shJet = cExl['Jet fire']
 shDispersion = cExl['Flammable Dispersion']
@@ -392,20 +393,18 @@ Z = {}
 Material = {}
 
 #1. Read Process Information from an Excel File
-iIS=load_workbook(filename='IS_v12_shk.xlsx')
+iIS=load_workbook(filename='I1_ProcessInfo.xlsx')
 shIS = iIS['Isolatable summary']
+#Number of sections to be read:
+NumSections = 3
+
 IS_sub = {}
 numESDVs = {}
 Modules = {}
 Deck = {}
 StartRow = 3
 r = StartRow
-#Number of sections to be read:
-NumSections = 5
-# while r < 79:
-#     nsub = shIS.cell(r,4).value
-#     IS_sub[shIS.cell(r,3).value] = [r,nsub]
-#     r += nsub
+
 while r < StartRow + NumSections:
     pv = shIS.cell(r,5).value
     IS_sub[pv] = shIS.cell(r,11).value #Read for each leak at respective height
@@ -497,8 +496,8 @@ lEvent = [] #List of class Event
 #Read Discharge, shDc
 # And evaluate ignition probability'
 # weathers = ['1.2/F', '6.6/D']
-weathers = ['2.9F','7.7D','14.5D']
-HoleSizes = [7.1, 36.1, 111.8, 150]
+weathers = ['0.1F']
+HoleSizes = [5.7, 10.4, 19.9, 25]
 dk=0
 #for r in range(2,numLeak*len(weathers)+2):
 for r in range(2,shDc.max_row+1):
@@ -610,8 +609,10 @@ for r in range(2,shDc.max_row+1):
 #Up to now, read IS, '_i', '_c[Discharge]'
 
 IgnProb = {}
-IgnProb['023-01']=[0.00050007132890309,0.00120241794400881,0.0121099047419176,0.0133941985161508]
-IgnProb['023-02']=[0.000500009730687852,0.00112728346839808,0.0114299096696923,0.0124894860472479]
+IgnProb['s3']=[0.08, 0.09, 0.11, 0.12]
+IgnProb['s8']=[0.08, 0.09, 0.11, 0.12]
+IgnProb['s9']=[0.005, 0.01, 0.04, 0.06]
+
 IgnProb['General']=[0.000502,0.001677,0.017112,0.017916]
 
 
@@ -711,13 +712,12 @@ for e in lEvent:
    
 
 
-
 #Read TV Discharge data and append the info on each Event ... equip - hole - weather
 
 for sfx in SFXFiles:
 # for sfx in ['021-01-01-L']:
     #sfx = '020-01'
-    tvExl = load_workbook(filename=TVDprefix + sfx+'.xlsx')
+    tvExl = load_workbook(filename=sfx+'.xlsx')
     print("Reading ...", sfx)
     sh = tvExl['Sheet1']
     new_scn = False
@@ -1116,7 +1116,6 @@ for e in lEvent:
         Fe += e.EarlyPoolFire.Frequency
     if e.LatePoolFire is not None:    
         Fl += e.LatePoolFire.Frequency
-
-print("{:15s} Liquid Leak Frequency: {:.2e}".format(Area, F))
+print("{:15s} Leak Frequency: {:.2e}".format(Area, F))
 print("{:15s} Pool fire Toal Frequency: Early {:.2e} Late {:.2e}".format(Area, Fe,Fl))
 # print("{:15s} Pool fire Toal Frequency: {:.2e}".format(Area, sum(EPFreq.values()) + sum(LPFreq.values())))
