@@ -97,6 +97,7 @@ while r < 82:
 # Jet fire length analysis for each module
 numDirections = 6
 Ts = [0, 300, 600, 1800, 3600]
+# Ts = [0]
 # for ti in range(0,5): #tt 1: 5 min, 2:10 min, 3: 30 min, 3: 60min
 for ti in range(0,1):
     print(Ts[ti])
@@ -139,7 +140,7 @@ for ti in range(0,1):
             di = jp[0]
             scn = jp[2]
         else:
-            for j in IDAsorted[-2:0:-1]:
+            for j in IDAsorted[-2::-1]:
                 cf = cfp + j[1]
                 dn = j[0]
                 scn = j[2]
@@ -191,8 +192,10 @@ for ti in range(0,1):
                 ec[i,0] = ec[i-1,0] + IDAsorted[ll-i-1][1]
 
             # plt.figure(figsize=(5.91, 3.15))
-            CF = ec[1:,0]
-            JFL = ec[1:,1]
+            # CF = ec[1:,0]
+            # JFL = ec[1:,1]
+            CF = ec[:,0]
+            JFL = ec[:,1]
             masscolor = 'tab:blue'
             fig,ax1 = plt.subplots()
             ax1.set_xlabel('Jet Fire Length [m]')
